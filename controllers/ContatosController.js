@@ -21,8 +21,19 @@ const controller = {
             res.status(404).json({msg: 'Usuário não existente'});
         };
     },
-    create: (req, res) => {
-        res.send('create');
+    create: async (req, res) => {
+        let {nome, emails, telefones} = req.body;
+
+        let sql = `INSERT INTO contatos (nome, usuarios_id) VALUES ("${nome}", "${uid}")`;
+        let resultado = await sequelize.query(sql, {type: sequelize.QueryTypes.INSERT});
+        let idCriado = resultado[0];
+        
+        sequelize.queryInterface.bulkInsert('emails', emails.map(e => {return {email: e, contatos_id: idCriado}}));
+
+        sequelize.queryInterface.bulkInsert('telefones', telefones.map(t => {return {telefone: t, contatos_id: idCriado}}));
+
+
+        res.json({msg: "OK", idCriado});
     },
     destroy: (req, res) => {
         res.send('destroy');
