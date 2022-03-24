@@ -1,4 +1,19 @@
 const main = document.querySelector('main');
+const modal = document.getElementById("modal");
+let link = document.getElementById("linkAbrirModal");
+let edits = document.querySelectorAll("section > a");
+let search = document.getElementById('search');
+
+let mostrarModal = () => {
+    modal.style.display = "flex";
+    modal.style.opacity = 1;
+};
+
+let esconderModal = (evt) => {
+    evt.bubbles = false;
+    modal.style.display = "none"
+    modal.style.opacity = 0;
+};
 
 // Simulando os contatos em uma variável
 let contatos = [
@@ -47,6 +62,7 @@ let contatos = [
 ];
 
 let showContatos = contatos =>{
+    main.innerHTML = '';
     contatos.forEach(c =>{
         let section = document.createElement('section');
         
@@ -77,41 +93,22 @@ let showContatos = contatos =>{
     });
 };
 
+let buscaContatos = trecho => {
+    let contatosFiltrados = contatos.filter(
+        c => c.nome.toUpperCase().includes(trecho.toUpperCase())
+    );
+
+    showContatos(contatosFiltrados);
+};
+
+link.addEventListener('click', mostrarModal);
+
+edits.forEach(
+    e => e.addEventListener('click', mostrarModal)
+);
+
+modal.addEventListener('click',esconderModal);
+
+search.addEventListener('keyup', e => buscaContatos(e.target.value));
+
 showContatos(contatos);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const modal = document.getElementById("modal");
-
-// let mostrarModal = () => {
-//     modal.style.display = "flex";
-//     modal.style.opacity = 1;
-// };
-
-// let esconderModal = (evt) => {
-//     evt.bubbles = false;
-//     modal.style.display = "none"
-//     modal.style.opacity = 0;
-// };
-
-// let link = document.getElementById("linkAbrirModal");
-// link.addEventListener('click', mostrarModal);
-
-// let edits = document.querySelectorAll("section > a");
-// edits.forEach(
-//     e => e.addEventListener('click', mostrarModal)
-// );
-
-// modal.addEventListener('click',esconderModal);
