@@ -1,3 +1,7 @@
+#app-container {
+    display: none;
+}
+
 nav {
     background-color: rgba(0,0,0,0.4);
     display: flex;
@@ -194,4 +198,23 @@ main section > a{
     justify-content: space-between;
     margin-top: 40px;
     margin-bottom: 0;
+}
+
+#login-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#login-container form {
+    background-color: rgba(0,0,0,0.4);
+    padding: 30px;
+}
+
+#login-container form .controles{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

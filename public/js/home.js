@@ -1,3 +1,9 @@
+const loginContainer = document.getElementById('login-container');
+const appContainer = document.getElementById('app-container');
+const formLogin = document.querySelector('#login-container > form');
+const emailLogin = document.getElementById('email');
+const senhaLogin = document.getElementById('senha');
+
 const main = document.querySelector('main');
 const modal = document.getElementById("modal");
 const link = document.getElementById("linkAbrirModal");
@@ -16,15 +22,22 @@ const esconderModal = (evt) => {
 };
 
 const loadContatos = async () =>{
-    try {
-        let resposta = await fetch('/contatos');
+    let token = sessionStorage.getItem('token');
+
+    try{
+        let resposta = await fetch('/contatos', 
+            {
+                method: 'GET',
+                headers: {
+                    authorization: `bearer ${token}`
+                }   
+            });
         let contatos = await resposta.json();
         showContatos(contatos);
-    } catch (error) {
+    }catch (error){
         console.log(error);
     };
 };
-loadContatos();
 
 const showContatos = contatos =>{
     main.innerHTML = '';
@@ -66,6 +79,35 @@ const buscaContatos = trecho => {
     showContatos(contatosFiltrados);
 };
 
+const login = async (email, senha) => {
+    let response = await fetch('/login', 
+    {
+        method: 'POST',
+        body: `{"email": "${email}", "senha": "${senha}"}`,
+        headers: {'content-type': 'application/json'}
+    });
+
+    if(response.status === 403){
+        alert('Login Inválido');
+        return;
+    }else if(response.status === 200){
+        //Acessar o conteúdo da response
+        let dados = await response.json();
+        
+        //Salvar o token
+        sessionStorage.setItem('token', dados.token);
+
+        //Mostrar o app container e esconder o login;
+        loginContainer.style.display = 'none';
+        appContainer.style.display = 'block';
+
+        //Carregar os contatos
+        loadContatos();
+    }else{
+        alert(`Erro inesperado. Entre em contato com o suporte. \n${response.statusText}`);
+    };
+};
+
 link.addEventListener('click', mostrarModal);
 
 edits.forEach(
@@ -75,3 +117,9 @@ edits.forEach(
 modal.addEventListener('click',esconderModal);
 
 search.addEventListener('keyup', e => buscaContatos(e.target.value));
+
+formLogin.addEventListener('submit', e => {
+    e.preventDefault();
+
+    login(emailLogin.value, senhaLogin.value);
+});
